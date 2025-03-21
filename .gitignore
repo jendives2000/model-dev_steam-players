@@ -127,4 +127,11 @@ cython_debug/
 duckdb.exe
 
 # Ignore sensible CSV file: 
-1-1_AI_methodology/models_development/steam_players/data_in/public_profiles.csv
+# Ignore public_profiles.csv in the data_in folder
+data_in/public_profiles.csv
+
+# Ignore last_start_account.txt in python folder
+python/last_start_account.txt
+
+# Ignore the backup folder
+model-dev_steam-players-backup/

@@ -10,13 +10,14 @@ import requests
 from dotenv import load_dotenv
 from shared_code_2 import (
     append_to_csv,
+    append_without_duplicates,
     setup_duckdb,
     steamid_from_accountid,
 )
 
 # Load environment variables
 current_dir = os.getcwd()
-env_path = Path(current_dir).parents[3] / ".env"
+env_path = Path(current_dir).parents[0] / ".env"
 print(f".env file exists: {env_path.exists()}")
 load_dotenv(dotenv_path=env_path)
 
@@ -117,7 +118,7 @@ def main():
                 con.close()  # Close after each call
 
                 # Append to CSV
-                append_to_csv(df, CSV_FILE)
+                append_without_duplicates(df, CSV_FILE)
 
             # Sleep to allow CSV writing
             time.sleep(sleep_time)

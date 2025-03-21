@@ -1,6 +1,11 @@
 import os
 
 import duckdb
+import pandas as pd
+
+from pathlib import Path
+BASE_DIR = Path(__file__)
+STATE_FILE = BASE_DIR / 'last_start_account.txt'
 
 
 def steamid_from_accountid(account_id):
@@ -43,3 +48,32 @@ def append_to_csv(df, csv_file):
     """Append the DataFrame to a CSV file."""
     header = not os.path.exists(csv_file)
     df.to_csv(csv_file, mode="a", header=header, index=False)
+
+
+def append_without_duplicates(new_df, csv_file, unique_col="steamid"):
+    # Check if CSV already exists
+    if os.path.exists(csv_file):
+        existing_df = pd.read_csv(csv_file)
+        # Concatenate the old and new DataFrames
+        combined_df = pd.concat([existing_df, new_df], ignore_index=True)
+        # Drop duplicates based on the unique column
+        combined_df = combined_df.drop_duplicates(subset=unique_col)
+    else:
+        combined_df = new_df
+    # Write the combined DataFrame back to the CSV file
+    combined_df.to_csv(csv_file, index=False)
+
+
+# Function to load the starting account ID from a file, with a default value
+def load_start_account_id(default_value=55000000, filename='last_start_account.txt'):
+    try:
+        with open(filename, 'r') as f:
+            value = int(f.read().strip())
+            return value
+    except FileNotFoundError:
+        return default_value
+    
+# Function to save the updated starting account ID to a file
+def save_start_account_id(value, filename='last_start_account.txt'):
+    with open(filename, 'w') as f:
+        f.write(str(value))
