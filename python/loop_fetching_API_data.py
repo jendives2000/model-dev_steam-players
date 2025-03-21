@@ -11,6 +11,8 @@ from dotenv import load_dotenv
 from shared_code_2 import (
     append_to_csv,
     append_without_duplicates,
+    load_start_account_id,
+    save_start_account_id,
     setup_duckdb,
     steamid_from_accountid,
 )
@@ -66,7 +68,8 @@ def fetch_player_summaries(steam_ids):
 def main():
     """Main function to run API calls continuously until limit is reached."""
     global api_calls
-    start_account_id = 50000000
+    # Load the last used start_account_id (or default to 55000000)
+    start_account_id = load_start_account_id()
     batch_size = 100
 
     try:
@@ -119,6 +122,11 @@ def main():
 
                 # Append to CSV
                 append_without_duplicates(df, CSV_FILE)
+
+            # Increment the starting account ID by the batch size
+            start_account_id += batch_size
+            # Persist the new starting account ID to file so that the next run picks it up
+            save_start_account_id(start_account_id)
 
             # Sleep to allow CSV writing
             time.sleep(sleep_time)

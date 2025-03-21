@@ -1,11 +1,11 @@
 import os
+from pathlib import Path
 
 import duckdb
 import pandas as pd
 
-from pathlib import Path
-BASE_DIR = Path(__file__)
-STATE_FILE = BASE_DIR / 'last_start_account.txt'
+BASE_DIR = Path(__file__).parent
+STATE_FILE = BASE_DIR / "last_start_account.txt"
 
 
 def steamid_from_accountid(account_id):
@@ -65,15 +65,17 @@ def append_without_duplicates(new_df, csv_file, unique_col="steamid"):
 
 
 # Function to load the starting account ID from a file, with a default value
-def load_start_account_id(default_value=55000000, filename='last_start_account.txt'):
+def load_start_account_id(default_value=55000000):
+    """Loads the last used start_account_id from a file."""
     try:
-        with open(filename, 'r') as f:
-            value = int(f.read().strip())
-            return value
+        with open(STATE_FILE, "r") as f:
+            return int(f.read().strip())
     except FileNotFoundError:
         return default_value
-    
+
+
 # Function to save the updated starting account ID to a file
-def save_start_account_id(value, filename='last_start_account.txt'):
-    with open(filename, 'w') as f:
+def save_start_account_id(value):
+    """Saves the last used start_account_id to a file."""
+    with open(STATE_FILE, "w") as f:
         f.write(str(value))
